@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
 
       - name: Install deps
-        run: npm ci
+        run: npm ci --legacy-peer-deps
         working-directory: client
 
       - name: Lint
