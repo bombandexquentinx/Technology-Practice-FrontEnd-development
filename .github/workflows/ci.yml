@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, development, ci-setup, feature/** ]
+  pull_request:
+    branches: [ main, development ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+        working-directory: client
+
+      - name: Lint
+        run: npm run lint --if-present
+        working-directory: client
+
+      - name: Run tests
+        run: npm test --if-present -- --ci --watchAll=false
+        working-directory: client
+
+      - name: Build
+        run: npm run build
+        working-directory: client
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: client/dist
